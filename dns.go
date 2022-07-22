@@ -51,11 +51,11 @@ type DNSResolver struct {
 
 func NewDNSResolver() *DNSResolver {
 	serverTCP := &dns.Server{
-		Addr: "72.9.147.58:53",
+		Addr: ip + ":53",
 		Net: "tcp",
 	}
 	serverUDP := &dns.Server{
-		Addr: "72.9.147.58:53",
+		Addr: ip + ":53",
 		Net: "udp",
 	}
 

@@ -7,19 +7,28 @@ import (
 	"syscall"
 )
 
+var (
+	ip string
+)
+
 /* NOTES
 - HTTP error codes start with 340, ex 340404 for 404
 - On links, when linking to .ugo pages, use .uls anyway, the client will still request .ugo
 */
 
 func main() {
+	if len(os.Args) == 1 {
+		panic("please specify the IP to host on!")
+	}
+	ip = os.Args[1]
+
 	dnsResolver = NewDNSResolver().
-		Add("conntest.nintendowifi.net.", "72.9.147.58").
-		Add("dsnattest.available.gs.nintendowifi.net.", "72.9.147.58").
+		Add("conntest.nintendowifi.net.", ip).
+		Add("dsnattest.available.gs.nintendowifi.net.", ip).
 		Add("nas.nintendowifi.net.", "178.62.43.212").
 		Add("nas.wiimmfi.de.", "178.62.43.212").
-		Add("ugomemo.hatena.ne.jp.", "72.9.147.58").
-		Add("flipnote.hatena.com.", "72.9.147.58")
+		Add("ugomemo.hatena.ne.jp.", ip).
+		Add("flipnote.hatena.com.", ip)
 
 	ht = NewHTTP().
 		GET("conntest.nintendowifi.net", "/", httpConntest).
