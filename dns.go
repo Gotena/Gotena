@@ -89,7 +89,7 @@ func (dns *DNSResolver) GetIP(host string) string {
 	if _, ok := dns.Records[host]; ok {
 		return dns.Records[host]
 	}
-	return "0.0.0.0"
+	return ip
 }
 
 func (dns *DNSResolver) Add(host, ip string) *DNSResolver {

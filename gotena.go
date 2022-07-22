@@ -24,7 +24,6 @@ func main() {
 
 	dnsResolver = NewDNSResolver().
 		Add("conntest.nintendowifi.net.", ip).
-		Add("dsnattest.available.gs.nintendowifi.net.", ip).
 		Add("nas.nintendowifi.net.", "178.62.43.212").
 		Add("nas.wiimmfi.de.", "178.62.43.212").
 		Add("ugomemo.hatena.ne.jp.", ip).
@@ -32,7 +31,6 @@ func main() {
 
 	ht = NewHTTP().
 		GET("conntest.nintendowifi.net", "/", httpConntest).
-		GET("dsnattest.available.gs.nintendowifi.net", "/", httpConntest).
 		GET("flipnote.hatena.com", "/:index", httpFlipnoteRootGET).
 		GET("flipnote.hatena.com", "/:index/:region", httpFlipnoteRootGET).
 		GET("flipnote.hatena.com", "/:index/:region/:language", httpFlipnoteRootGET).

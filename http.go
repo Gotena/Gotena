@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -23,6 +24,7 @@ func (hs HostSwitch) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// Handle host names for which no handler is registered
 		// Pretend access is denied always
+		fmt.Printf("[UNKNOWN] %s %s", r.Host, r.URL)
 		http.Error(w, "Forbidden", 403) // Or Redirect?
 	}
 }
