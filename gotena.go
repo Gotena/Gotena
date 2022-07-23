@@ -1,10 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 var (
@@ -31,14 +36,16 @@ func main() {
 
 	ht = NewHTTP().
 		GET("conntest.nintendowifi.net", "/", httpConntest).
-		GET("flipnote.hatena.com", "/:index", httpFlipnoteRootGET).
-		GET("flipnote.hatena.com", "/:index/:region", httpFlipnoteRootGET).
-		GET("flipnote.hatena.com", "/:index/:region/:language", httpFlipnoteRootGET).
-		GET("flipnote.hatena.com", "/:index/:region/:language/:page", httpFlipnoteRootGET).
-		POST("flipnote.hatena.com", "/:index", httpFlipnoteRootPOST).
-		POST("flipnote.hatena.com", "/:index/:region", httpFlipnoteRootPOST).
-		POST("flipnote.hatena.com", "/:index/:region/:language", httpFlipnoteRootPOST).
-		POST("flipnote.hatena.com", "/:index/:region/:language/:page", httpFlipnoteRootPOST)
+		GET("flipnote.hatena.com", "/:namespace", httpFlipnoteRootGET).
+		GET("flipnote.hatena.com", "/:namespace/:region", httpFlipnoteRootGET).
+		GET("flipnote.hatena.com", "/:namespace/:region/:index", httpFlipnoteRootGET).
+		GET("flipnote.hatena.com", "/:namespace/:region/:index/:i1", httpFlipnoteRootGET).
+		GET("flipnote.hatena.com", "/:namespace/:region/:index/:i1/:i2", httpFlipnoteRootGET).
+		POST("flipnote.hatena.com", "/:namespace", httpFlipnoteRootPOST).
+		POST("flipnote.hatena.com", "/:namespace/:region", httpFlipnoteRootPOST).
+		POST("flipnote.hatena.com", "/:namespace/:region/:index", httpFlipnoteRootPOST).
+		POST("flipnote.hatena.com", "/:namespace/:region/:index/:i1", httpFlipnoteRootPOST).
+		POST("flipnote.hatena.com", "/:namespace/:region/:index/:i1/:i2", httpFlipnoteRootPOST)
 
 	go func() {
 		dnsErr := dnsResolver.ListenAndServeTCP()
@@ -70,4 +77,27 @@ func main() {
 	ht.Close()
 
 	fmt.Println("Good-bye!")
+}
+
+func ReadUTF16String(data []byte) string {
+	win16le := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM)
+	utf16bom := unicode.BOMOverride(win16le.NewDecoder())
+	unicodeReader := transform.NewReader(bytes.NewReader(data), utf16bom)
+	decoded, err := ioutil.ReadAll(unicodeReader)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(decoded)
+}
+func WriteUTF16String(data string) []byte {
+	win16le := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM)
+	utf16bom := unicode.BOMOverride(win16le.NewEncoder())
+	unicodeWriter := transform.NewReader(bytes.NewReader([]byte(data)), utf16bom)
+	encoded, err := ioutil.ReadAll(unicodeWriter)
+	if err != nil {
+		panic(err)
+	}
+
+	return encoded
 }

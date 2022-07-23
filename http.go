@@ -20,6 +20,7 @@ func (hs HostSwitch) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Check if a http.Handler is registered for the given host.
 	// If yes, use it to handle the request.
 	if handler := hs[r.Host]; handler != nil {
+		fmt.Printf("[HTTP] %s: %v = %v\n", r.Host, r.URL.Path, r.Header)
 		handler.ServeHTTP(w, r)
 	} else {
 		// Handle host names for which no handler is registered
