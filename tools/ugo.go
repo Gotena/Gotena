@@ -95,7 +95,7 @@ func (u *UGO) Pack() ([]byte, error) {
 }
 
 func writeButton(w io.Writer, asset UgoAsset) {
-	binary.Write(w, binary.LittleEndian, []byte(fmt.Sprintf("4\t%s\t%d\t%s\n", asset.Url, 0, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)))))
+	binary.Write(w, binary.LittleEndian, []byte(fmt.Sprintf("4\t%s\t%d\t%s\n", asset.Url, asset.Number, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)))))
 }
 
 func writeCategory(w io.Writer, asset UgoAsset) {
