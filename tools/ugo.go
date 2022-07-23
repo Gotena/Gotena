@@ -29,13 +29,16 @@ func FileMagic() [4]byte { return [4]byte{'U', 'G', 'A', 'R'} }
 
 const (
 	TypeButton UgoAssetType = iota
+	TypeCategory
+	TypePost
 )
 
 type UgoAsset struct {
-	Type  UgoAssetType `json:"type,omitempty"`
-	Name  string       `json:"name,omitempty"`
-	Url   string       `json:"url,omitempty"`
-	Image string       `json:"image,omitempty"`
+	Type   UgoAssetType `json:"type,omitempty"`
+	Name   string       `json:"name,omitempty"`
+	Url    string       `json:"url,omitempty"`
+	Image  string       `json:"image,omitempty"`
+	Number int          `json:"number,omitempty"`
 }
 
 func ParseUgo(data []byte) (*UGO, error) {
@@ -44,8 +47,6 @@ func ParseUgo(data []byte) (*UGO, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(ugo)
 
 	return &ugo, nil
 }
@@ -73,6 +74,8 @@ func (u *UGO) Pack() ([]byte, error) {
 			switch asset.Type {
 			case TypeButton:
 				writeButton(tableOfContents, asset)
+			case TypeCategory:
+				writeCategory(tableOfContents, asset)
 			}
 		}
 
@@ -93,4 +96,8 @@ func (u *UGO) Pack() ([]byte, error) {
 
 func writeButton(w io.Writer, asset UgoAsset) {
 	binary.Write(w, binary.LittleEndian, []byte(fmt.Sprintf("4\t%s\t%d\t%s\n", asset.Url, 0, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)))))
+}
+
+func writeCategory(w io.Writer, asset UgoAsset) {
+	binary.Write(w, binary.LittleEndian, []byte(fmt.Sprintf("2\t%s\t%s\t%d\n", asset.Url, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)), asset.Number)))
 }
