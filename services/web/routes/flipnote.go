@@ -115,6 +115,7 @@ func FlipnoteRoutes(app *fiber.App) {
 	POST(flipnoteURL, "/ds/:region/auth", flipnoteAuthPost, app)
 
 	GET(flipnoteURL, "/ds/:region/index.ugo", flipnoteIndexGet, app)
+	GET(flipnoteURL, "/ds/:region/frontpage/frontpage.ugo", flipnoteFrontPageGet, app)
 
 	GET(flipnoteURL, "/ds/:region/:language/eula.txt", flipnoteEulaGet, app)
 	GET(flipnoteURL, "/ds/:region/:language/confirm/:file", flipnoteConfirmGet, app)
@@ -163,6 +164,28 @@ func flipnoteAuthPost(c *fiber.Ctx) error {
 func flipnoteIndexGet(c *fiber.Ctx) error {
 
 	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/index.ugo.json")
+	if err != nil {
+		fmt.Println("[index] Error reading ugo json:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	ugo, err := tools.ParseUgo(ugoJson)
+	if err != nil {
+		fmt.Println("[index] Error parsing ugo json:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	ugoBytes, err := ugo.Pack()
+	if err != nil {
+		fmt.Println("[index] Error packing ugo json:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	return c.Send(ugoBytes)
+}
+
+func flipnoteFrontPageGet(c *fiber.Ctx) error {
+	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/frontpage.ugo.json")
 	if err != nil {
 		fmt.Println("[index] Error reading ugo json:", err)
 		return c.SendStatus(http.StatusInternalServerError)

@@ -1,0 +1,30 @@
+{
+    "layout": 1,
+    "title": {
+        "names": [
+            "Gotena",
+            "JoshuaDoes",
+            "Rin",
+            "Browse Flipnotes",
+            "Gotena"
+        ],
+        "index": 0
+    },
+    "contents": [
+        {
+            "type": 0,
+            "name": "Most Popular",
+            "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/hotmovies.uls"
+        },
+        {
+            "type": 0,
+            "name": "Most Liked",
+            "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/likedmovies.uls"
+        },
+        {
+            "type": 0,
+            "name": "New Flipnotes",
+            "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/newmovies.uls"
+        }
+    ]
+}
