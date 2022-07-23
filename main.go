@@ -50,7 +50,7 @@ func main() {
 		}
 	}()
 	go func() {
-		httpErr := ht.Listen(":80")
+		httpErr := ht.Listen(ip + ":80")
 		if httpErr != nil {
 			panic(httpErr)
 		}
