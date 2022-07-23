@@ -1,0 +1,8 @@
+The official Flipnote Hatena servers have ended their service.
+This is an open source replacement hosted by
+JoshuaDoes and RinLovesYou. Our source:
+https://github.com/Gotena/Gotena
+
+Gotena is still in its infancy, so 
+please be gentle with it. Or don't, 
+we want to validate good data!
