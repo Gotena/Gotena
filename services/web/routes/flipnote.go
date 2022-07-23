@@ -3,7 +3,9 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/JoshuaDoes/gotena/tools"
 	"github.com/JoshuaDoes/gotena/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/julienschmidt/httprouter"
@@ -116,6 +118,7 @@ func FlipnoteRoutes(app *fiber.App) {
 
 	GET(flipnoteURL, "/ds/:region/:language/eula.txt", flipnoteEulaGet, app)
 	GET(flipnoteURL, "/ds/:region/:language/confirm/:file", flipnoteConfirmGet, app)
+	GET(flipnoteURL, "/ds/:region/help/info.htm", flipnoteInfoGet, app)
 }
 
 func flipnoteAuthGet(c *fiber.Ctx) error {
@@ -158,14 +161,29 @@ func flipnoteAuthPost(c *fiber.Ctx) error {
 }
 
 func flipnoteIndexGet(c *fiber.Ctx) error {
-	fmt.Println("[index] ugo stub")
 
-	return c.SendStatus(http.StatusOK)
+	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/index.ugo.json")
+	if err != nil {
+		fmt.Println("[index] Error reading ugo json:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	ugo, err := tools.ParseUgo(ugoJson)
+	if err != nil {
+		fmt.Println("[index] Error parsing ugo json:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	ugoBytes, err := ugo.Pack()
+	if err != nil {
+		fmt.Println("[index] Error packing ugo json:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	return c.Send(ugoBytes)
 }
 
 func flipnoteEulaGet(c *fiber.Ctx) error {
-	fmt.Println("[eula] ugo stub")
-
 	lang := c.Params("language")
 	if lang != "en" && lang != "jp" && lang != "es" {
 		return c.SendStatus(http.StatusBadRequest)
@@ -175,8 +193,6 @@ func flipnoteEulaGet(c *fiber.Ctx) error {
 }
 
 func flipnoteConfirmGet(c *fiber.Ctx) error {
-	fmt.Println("[confirm] ugo stub")
-
 	file := c.Params("file")
 	lang := c.Params("language")
 
@@ -194,4 +210,16 @@ func flipnoteConfirmGet(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(http.StatusNotFound)
+}
+
+func flipnoteInfoGet(c *fiber.Ctx) error {
+	c.Response().Header.Set("content-type", "text/html")
+
+	file, err := os.ReadFile("services/web/views/info.htm")
+	if err != nil {
+		fmt.Println("[help] Error reading info file:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	return c.Send(file)
 }

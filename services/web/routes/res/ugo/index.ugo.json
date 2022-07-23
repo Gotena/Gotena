@@ -1,0 +1,25 @@
+{
+    "layout": 0,
+    "title": {
+        "names": [
+            "Gotena",
+            "Gotena",
+            "Gotena",
+            "Gotena",
+            "Gotena"
+        ],
+        "index": 0
+    },
+    "contents": [
+        {
+            "type": 0,
+            "name": "Browse Flipnotes",
+            "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/hotmovies.uls"
+        },
+        {
+            "type": 0,
+            "name": "Info",
+            "url": "http://flipnote.hatena.com/ds/v2-xx/help/info.htm"
+        }
+    ]
+}
