@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
+	"strings"
 
 	"github.com/JoshuaDoes/gotena/utils"
 )
@@ -38,7 +40,10 @@ type UgoAsset struct {
 	Name   string       `json:"name,omitempty"`
 	Url    string       `json:"url,omitempty"`
 	Image  string       `json:"image,omitempty"`
-	Number int          `json:"number,omitempty"`
+	Index1 int          `json:"number,omitempty"`
+	Index2 int          `json:"number2,omitempty"`
+	Index3 int          `json:"number3,omitempty"`
+	Index4 int          `json:"number4,omitempty"`
 }
 
 func ParseUgo(data []byte) (*UGO, error) {
@@ -57,6 +62,7 @@ func (u *UGO) Pack() ([]byte, error) {
 	sections := uint32(0)
 
 	tableOfContents := bytes.NewBuffer([]byte{})
+	extraData := bytes.NewBuffer([]byte{})
 
 	binary.Write(tableOfContents, binary.LittleEndian, []byte(fmt.Sprintf("0\t%d\n", u.Layout)))
 	labels := []string{}
@@ -73,7 +79,7 @@ func (u *UGO) Pack() ([]byte, error) {
 		for _, asset := range u.Assets {
 			switch asset.Type {
 			case TypeButton:
-				writeButton(tableOfContents, asset)
+				writeButton(tableOfContents, extraData, asset)
 			case TypeCategory:
 				writeCategory(tableOfContents, asset)
 			}
@@ -85,19 +91,42 @@ func (u *UGO) Pack() ([]byte, error) {
 		}
 	}
 
+	if extraData.Len() > 0 {
+		sections++
+
+		for len(extraData.Bytes())%4 != 0 {
+			alignment := make([]byte, 4-len(extraData.Bytes())%4)
+			extraData.Write(alignment)
+		}
+	}
+
 	binary.Write(w, binary.LittleEndian, FileMagic())
 	binary.Write(w, binary.LittleEndian, sections)
 
-	binary.Write(w, binary.LittleEndian, uint32(len(tableOfContents.Bytes())))
+	if sections == 1 {
+		binary.Write(w, binary.LittleEndian, uint32(len(tableOfContents.Bytes())))
+	} else if sections == 2 {
+		binary.Write(w, binary.LittleEndian, uint32(len(tableOfContents.Bytes())))
+		binary.Write(w, binary.LittleEndian, uint32(len(extraData.Bytes())))
+	}
 	binary.Write(w, binary.LittleEndian, tableOfContents.Bytes())
+	binary.Write(w, binary.LittleEndian, extraData.Bytes())
 
 	return w.Bytes(), nil
 }
 
-func writeButton(w io.Writer, asset UgoAsset) {
-	binary.Write(w, binary.LittleEndian, []byte(fmt.Sprintf("4\t%s\t%d\t%s\n", asset.Url, asset.Number, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)))))
+func writeButton(tableContents, extraData io.Writer, asset UgoAsset) {
+	binary.Write(tableContents, binary.LittleEndian, []byte(fmt.Sprintf("4\t%s\t%d\t%s\t%d\t%d\t%d\n", asset.Url, asset.Index1, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)), asset.Index2, asset.Index3, asset.Index4)))
+	if strings.HasSuffix(asset.Url, ".ppm") {
+		ppmFile, err := os.ReadFile("services/web/routes/res/bokeh.ppm")
+		if err != nil {
+			return
+		}
+
+		extraData.Write(ppmFile[:1696])
+	}
 }
 
 func writeCategory(w io.Writer, asset UgoAsset) {
-	binary.Write(w, binary.LittleEndian, []byte(fmt.Sprintf("2\t%s\t%s\t%d\n", asset.Url, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)), asset.Number)))
+	binary.Write(w, binary.LittleEndian, []byte(fmt.Sprintf("2\t%s\t%s\t%d\n", asset.Url, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)), asset.Index1)))
 }

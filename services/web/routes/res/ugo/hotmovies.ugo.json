@@ -1,0 +1,24 @@
+{
+    "layout": 2,
+    "title": {
+        "names": [
+            "Gotena",
+            "JoshuaDoes",
+            "Rin",
+            "Browse Flipnotes",
+            "Gotena"
+        ],
+        "index": 0
+    },
+    "contents": [
+        {
+            "type": 0,
+            "number": 3,
+            "name": "Example",
+            "url": "http://flipnote.hatena.com/ds/v2-xx/movie/5C8376C0A0E463D3/bokeh.ppm",
+            "number2": 10,
+            "number3": 420,
+            "number4": 0
+        }
+    ]
+}

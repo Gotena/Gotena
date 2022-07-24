@@ -12,18 +12,17 @@
     },
     "contents": [
         {
-            "type": 1,
+            "type": 0,
             "name": "Most Popular",
-            "number": 1,
             "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/hotmovies.uls"
         },
         {
-            "type": 1,
+            "type": 0,
             "name": "Most Liked",
             "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/likedmovies.uls"
         },
         {
-            "type": 1,
+            "type": 0,
             "name": "New Flipnotes",
             "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/newmovies.uls"
         }
