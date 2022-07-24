@@ -19,7 +19,8 @@
         {
             "type": 0,
             "name": "Info",
-            "url": "http://flipnote.hatena.com/ds/v2-xx/help/info.htm"
+            "url": "http://flipnote.hatena.com/ds/v2-xx/help/info.htm",
+            "image": "services/web/routes/res/images/News.ntft"
         }
     ]
 }
