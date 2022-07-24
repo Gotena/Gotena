@@ -124,6 +124,17 @@ func FlipnoteRoutes(app *fiber.App) {
 	GET(flipnoteURL, "/ds/:region/:language/eula.txt", flipnoteEulaGet, app)
 	GET(flipnoteURL, "/ds/:region/:language/confirm/:file", flipnoteConfirmGet, app)
 	GET(flipnoteURL, "/ds/:region/help/info.htm", flipnoteInfoGet, app)
+	GET(flipnoteURL, "css/ds/:file", flipnoteCssGet, app)
+}
+
+func flipnoteCssGet(c *fiber.Ctx) error {
+	file := c.Params("file")
+	if file == "" {
+		c.Status(http.StatusNotFound)
+		return c.SendStatus(http.StatusNotFound)
+	}
+
+	return c.SendFile(fmt.Sprintf("services/web/routes/res/css/%s", file))
 }
 
 func flipnoteAuthGet(c *fiber.Ctx) error {
@@ -347,11 +358,11 @@ func flipnoteMovieGet(c *fiber.Ctx) error {
 
 		//Stars
 		stars := "0"
-		starsContent := fmt.Sprintf(`<a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star0c">\u2605</span> <span class="star0">%s</span></a>`, creator, filename, stars)
-		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star1c">\u2605</span> <span class="star1">%s</span></a>`, creator, filename, stars)
-		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star2c">\u2605</span> <span class="star2">%s</span></a>`, creator, filename, stars)
-		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star3c">\u2605</span> <span class="star3">%s</span></a>`, creator, filename, stars)
-		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star4c">\u2605</span> <span class="star4">%s</span></a>`, creator, filename, stars)
+		starsContent := fmt.Sprintf(`<a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star0c">★</span> <span class="star0">%s</span></a>`, creator, filename, stars)
+		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star1c">★</span> <span class="star1">%s</span></a>`, creator, filename, stars)
+		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star2c">★</span> <span class="star2">%s</span></a>`, creator, filename, stars)
+		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star3c">★</span> <span class="star3">%s</span></a>`, creator, filename, stars)
+		starsContent += fmt.Sprintf(`<br/><a href="http://flipnote.hatena.com/ds/v2-xx/movie/%s/%s.htm?mode=stardetail"><span class="star4c">★</span> <span class="star4">%s</span></a>`, creator, filename, stars)
 		starsEntry := entryTemplate
 		starsEntry = strings.ReplaceAll(starsEntry, "{{Name}}", "Stars")
 		starsEntry = strings.ReplaceAll(starsEntry, "{{Content}}", starsContent)
