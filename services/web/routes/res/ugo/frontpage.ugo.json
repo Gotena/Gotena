@@ -1,5 +1,5 @@
 {
-    "layout": 1,
+    "layout": 4,
     "title": {
         "names": [
             "Gotena",
@@ -14,16 +14,19 @@
         {
             "type": 0,
             "name": "Most Popular",
+            "number": 101,
             "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/hotmovies.uls"
         },
         {
             "type": 0,
             "name": "Most Liked",
+            "number": 106,
             "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/likedmovies.uls"
         },
         {
             "type": 0,
             "name": "New Flipnotes",
+            "number": 104,
             "url": "http://flipnote.hatena.com/ds/v2-xx/frontpage/newmovies.uls"
         }
     ]

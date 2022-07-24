@@ -147,11 +147,21 @@ func (u *UGO) Pack() ([]byte, error) {
 }
 
 func writeButton(tableContents, extraData *crunch.Buffer, asset UgoAsset) {
-	next := []byte(fmt.Sprintf("4\t%s\t%d\t%s\t%d\t%d\t%d\n", asset.Url, asset.Index1, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name)), asset.Index2, asset.Index3, asset.Index4))
+	next := []byte(fmt.Sprintf("4\t%s\t%d\t%s", asset.Url, asset.Index1, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name))))
 
-	if asset.Index1 == 0 {
-		next = []byte(fmt.Sprintf("4\t%s\t%d\t%s\n", asset.Url, asset.Index1, base64.StdEncoding.EncodeToString(utils.WriteUTF16String(asset.Name))))
+	if asset.Index2 > 0 {
+		next = append(next, []byte(fmt.Sprintf("\t%d", asset.Index2))...)
 	}
+
+	if asset.Index3 > 0 {
+		next = append(next, []byte(fmt.Sprintf("\t%d", asset.Index3))...)
+	}
+
+	if asset.Index4 > 0 {
+		next = append(next, []byte(fmt.Sprintf("\t%d", asset.Index4))...)
+	}
+
+	next = append(next, '\n')
 
 	tableContents.Grow(int64(len(next)))
 	tableContents.WriteBytesNext(next)
