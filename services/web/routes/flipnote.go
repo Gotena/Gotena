@@ -116,8 +116,7 @@ func FlipnoteRoutes(app *fiber.App) {
 	POST(flipnoteURL, "/ds/:region/auth", flipnoteAuthPost, app)
 
 	GET(flipnoteURL, "/ds/:region/index.ugo", flipnoteIndexGet, app)
-	GET(flipnoteURL, "/ds/:region/frontpage/frontpage.ugo", flipnoteFrontPageGet, app)
-	GET(flipnoteURL, "/ds/:region/frontpage/hotmovies.ugo", flipnoteHotMoviesGet, app)
+	GET(flipnoteURL, "/ds/:region/frontpage/:filename", flipnoteUgoGet, app)
 
 	GET(flipnoteURL, "/ds/:region/movie/:id/:file", flipnoteMovieGet, app)
 
@@ -125,6 +124,16 @@ func FlipnoteRoutes(app *fiber.App) {
 	GET(flipnoteURL, "/ds/:region/:language/confirm/:file", flipnoteConfirmGet, app)
 	GET(flipnoteURL, "/ds/:region/help/info.htm", flipnoteInfoGet, app)
 	GET(flipnoteURL, "css/ds/:file", flipnoteCssGet, app)
+}
+
+func flipnoteUgoGet(c *fiber.Ctx) error {
+	filename := c.Params("filename")
+	if filename == "" || !strings.HasSuffix(filename, ".ugo") {
+		fmt.Println("[Flipnote] Invalid filename")
+		return c.SendStatus(http.StatusNotFound)
+	}
+
+	return sendUgo(fmt.Sprintf("services/web/routes/res/ugo/%s.json", filename), c)
 }
 
 func flipnoteCssGet(c *fiber.Ctx) error {
@@ -176,51 +185,6 @@ func flipnoteAuthPost(c *fiber.Ctx) error {
 	return nil
 }
 
-func flipnoteIndexGet(c *fiber.Ctx) error {
-
-	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/index.ugo.json")
-	if err != nil {
-		fmt.Println("[index] Error reading ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugo, err := tools.ParseUgo(ugoJson)
-	if err != nil {
-		fmt.Println("[index] Error parsing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugoBytes, err := ugo.Pack()
-	if err != nil {
-		fmt.Println("[index] Error packing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	return c.Send(ugoBytes)
-}
-
-func flipnoteFrontPageGet(c *fiber.Ctx) error {
-	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/frontpage.ugo.json")
-	if err != nil {
-		fmt.Println("[index] Error reading ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugo, err := tools.ParseUgo(ugoJson)
-	if err != nil {
-		fmt.Println("[index] Error parsing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugoBytes, err := ugo.Pack()
-	if err != nil {
-		fmt.Println("[index] Error packing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	return c.Send(ugoBytes)
-}
-
 func flipnoteEulaGet(c *fiber.Ctx) error {
 	lang := c.Params("language")
 	if lang != "en" && lang != "jp" && lang != "es" {
@@ -262,26 +226,8 @@ func flipnoteInfoGet(c *fiber.Ctx) error {
 	return c.Send(file)
 }
 
-func flipnoteHotMoviesGet(c *fiber.Ctx) error {
-	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/hotmovies.ugo.json")
-	if err != nil {
-		fmt.Println("[index] Error reading ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugo, err := tools.ParseUgo(ugoJson)
-	if err != nil {
-		fmt.Println("[index] Error parsing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugoBytes, err := ugo.Pack()
-	if err != nil {
-		fmt.Println("[index] Error packing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	return c.Send(ugoBytes)
+func flipnoteIndexGet(c *fiber.Ctx) error {
+	return sendUgo("services/web/routes/res/ugo/index.ugo.json", c)
 }
 
 func flipnoteMovieGet(c *fiber.Ctx) error {
@@ -401,4 +347,14 @@ func flipnoteMovieGet(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(http.StatusNotFound)
+}
+
+func sendUgo(path string, c *fiber.Ctx) error {
+	ugoBytes, err := tools.PackUgoJson(path)
+	if err != nil {
+		fmt.Println("[Flipnote] Error packing index.ugo.json:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	return c.Send(ugoBytes)
 }
