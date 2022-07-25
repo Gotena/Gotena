@@ -333,7 +333,7 @@ func flipnoteMovieGet(c *fiber.Ctx) error {
 
 	if strings.HasSuffix(filename, ".htm") {
 
-		filename = strings.TrimSuffix(filename, ".ppm")
+		filename = strings.TrimSuffix(filename, ".htm")
 
 		ppmFile, err := os.ReadFile("services/web/routes/res/bokeh.ppm")
 		if err != nil {
