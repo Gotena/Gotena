@@ -282,7 +282,7 @@ func flipnoteMovieGet(c *fiber.Ctx) error {
 
 	if strings.HasSuffix(filename, ".ppm") {
 		c.Response().Header.Set("content-type", "text/plain")
-		file, err := os.ReadFile("services/web/routes/res/" + filename ".ppm")
+		file, err := os.ReadFile("services/web/routes/res/" + filename + ".ppm")
 		if err != nil {
 			fmt.Println("[Flipnote] Error reading PPM:", err)
 			return c.SendStatus(http.StatusInternalServerError)
