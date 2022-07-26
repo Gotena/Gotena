@@ -155,7 +155,7 @@ func flipnoteAuthGet(c *fiber.Ctx) error {
 	sess.Set("auth", authChallenge)
 
 	if err := sess.Save(); err != nil {
-		fmt.Println("[Fiber] Error saving session for SID", sess.ID())
+		fmt.Printf("[Fiber] Error saving session for SID %s: %v\n", sess.ID(), err)
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
@@ -179,9 +179,6 @@ func flipnoteAuthPost(c *fiber.Ctx) error {
 		fmt.Println("[Fiber] Unable to retrieve session:", err)
 		return c.SendStatus(http.StatusInternalServerError)
 	}
-
-	fmt.Println("[Flipnote] Attempting to auth", sess.ID())
-	fmt.Println("Current keys:", sess.Keys())
 
 	fsid := c.Get("X-DSi-ID")
 	if fsid == "" {
