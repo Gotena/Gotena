@@ -209,6 +209,10 @@ func flipnoteAuthPost(c *fiber.Ctx) error {
 	}
 
 	sess.Set("authResp", authResp)
+	if err := sess.Save(); err != nil {
+		fmt.Printf("[Fiber] Error saving session for SID %s: %v\n", sess.ID(), err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
 
 	c.Response().Header.Set("X-DSi-SID", sess.ID())
 	c.Response().Header.Set("X-DSi-New-Notices", "1")
