@@ -177,47 +177,20 @@ func flipnoteAuthPost(c *fiber.Ctx) error {
 }
 
 func flipnoteIndexGet(c *fiber.Ctx) error {
-
-	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/index.ugo.json")
+	ugoBytes, err := tools.PackUgoJson("services/web/routes/res/ugo/index.ugo.json")
 	if err != nil {
-		fmt.Println("[index] Error reading ugo json:", err)
+		fmt.Println("[Flipnote] Error reading UGO for index:", err)
 		return c.SendStatus(http.StatusInternalServerError)
 	}
-
-	ugo, err := tools.ParseUgo(ugoJson)
-	if err != nil {
-		fmt.Println("[index] Error parsing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugoBytes, err := ugo.Pack()
-	if err != nil {
-		fmt.Println("[index] Error packing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
 	return c.Send(ugoBytes)
 }
 
 func flipnoteFrontPageGet(c *fiber.Ctx) error {
-	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/frontpage.ugo.json")
+	ugoBytes, err := tools.PackUgoJson("services/web/routes/res/ugo/frontpage.ugo.json")
 	if err != nil {
-		fmt.Println("[index] Error reading ugo json:", err)
+		fmt.Println("[Flipnote] Error reading UGO for front page:", err)
 		return c.SendStatus(http.StatusInternalServerError)
 	}
-
-	ugo, err := tools.ParseUgo(ugoJson)
-	if err != nil {
-		fmt.Println("[index] Error parsing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugoBytes, err := ugo.Pack()
-	if err != nil {
-		fmt.Println("[index] Error packing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
 	return c.Send(ugoBytes)
 }
 
@@ -255,7 +228,7 @@ func flipnoteInfoGet(c *fiber.Ctx) error {
 
 	file, err := os.ReadFile("services/web/views/info.htm")
 	if err != nil {
-		fmt.Println("[help] Error reading info file:", err)
+		fmt.Println("[Flipnote] Error reading info view:", err)
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
@@ -263,24 +236,11 @@ func flipnoteInfoGet(c *fiber.Ctx) error {
 }
 
 func flipnoteHotMoviesGet(c *fiber.Ctx) error {
-	ugoJson, err := os.ReadFile("services/web/routes/res/ugo/hotmovies.ugo.json")
+	ugoBytes, err := tools.PackUgoJson("services/web/routes/res/ugo/hotmovies.ugo.json")
 	if err != nil {
-		fmt.Println("[index] Error reading ugo json:", err)
+		fmt.Println("[Flipnote] Error reading UGO for hot movies:", err)
 		return c.SendStatus(http.StatusInternalServerError)
 	}
-
-	ugo, err := tools.ParseUgo(ugoJson)
-	if err != nil {
-		fmt.Println("[index] Error parsing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	ugoBytes, err := ugo.Pack()
-	if err != nil {
-		fmt.Println("[index] Error packing ugo json:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
 	return c.Send(ugoBytes)
 }
 
@@ -322,9 +282,9 @@ func flipnoteMovieGet(c *fiber.Ctx) error {
 
 	if strings.HasSuffix(filename, ".ppm") {
 		c.Response().Header.Set("content-type", "text/plain")
-		file, err := os.ReadFile("services/web/routes/res/bokeh.ppm")
+		file, err := os.ReadFile("services/web/routes/res/" + filename ".ppm")
 		if err != nil {
-			fmt.Println("[Flipnote] Error reading bokeh ppm:", err)
+			fmt.Println("[Flipnote] Error reading PPM:", err)
 			return c.SendStatus(http.StatusInternalServerError)
 		}
 
@@ -335,15 +295,15 @@ func flipnoteMovieGet(c *fiber.Ctx) error {
 
 		filename = strings.TrimSuffix(filename, ".ppm")
 
-		ppmFile, err := os.ReadFile("services/web/routes/res/bokeh.ppm")
+		ppmFile, err := os.ReadFile("services/web/routes/res/" + filename + ".ppm")
 		if err != nil {
-			fmt.Println("[Flipnote] Error reading ppm file:", err)
+			fmt.Println("[Flipnote] Error reading PPM:", err)
 			return c.SendStatus(http.StatusInternalServerError)
 		}
 
 		ppm, err := ppmlib.Parse(ppmFile)
 		if err != nil {
-			fmt.Println("[Flipnote] Error parsing ppm file:", err)
+			fmt.Println("[Flipnote] Error parsing PPM:", err)
 			return c.SendStatus(http.StatusInternalServerError)
 		}
 
