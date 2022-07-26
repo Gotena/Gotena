@@ -29,11 +29,12 @@ func main() {
 	ip = os.Args[1]
 
 	dnsResolver = dns.NewDNSResolver(ip).
-		Add("conntest.nintendowifi.net.", ip).
-		Add("nas.nintendowifi.net.", "178.62.43.212").
-		Add("nas.wiimmfi.de.", "178.62.43.212").
-		Add("ugomemo.hatena.ne.jp.", ip).
-		Add("flipnote.hatena.com.", ip)
+		Add("conntest.nintendowifi.net.", ip).               //Nintendo WFC connection tests
+		Add("cfh.t.app.nintendowifi.net.", "44.228.79.100"). //Internet service agreement
+		Add("nas.nintendowifi.net.", "178.62.43.212").       //Wiimmfi replacement for Nintendo Authentication Server
+		Add("nas.wiimmfi.de.", "178.62.43.212").             //Wiimmfi direct support
+		Add("ugomemo.hatena.ne.jp.", ip).                    //Hatena for Japanese region consoles
+		Add("flipnote.hatena.com.", ip)                      //Hatena for the world
 
 	ht = web.InitFiber()
 
