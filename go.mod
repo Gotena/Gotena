@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/RinLovesYou/ppmlib-go v0.0.0-20220725104256-43763466bf60
 	github.com/gofiber/fiber/v2 v2.35.0
+	github.com/gofiber/storage/sqlite3 v0.0.0-20220523092334-6d96fb56afb5
 	github.com/gofiber/template v1.6.29
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/miekg/dns v1.1.50
@@ -18,6 +19,7 @@ require (
 	github.com/go-audio/riff v1.0.0 // indirect
 	github.com/go-audio/wav v1.1.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.13 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.38.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect

@@ -10,6 +10,7 @@ import (
 	"github.com/Gotena/Gotena/utils"
 	"github.com/RinLovesYou/ppmlib-go"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 
 	_ "embed"
 )
@@ -138,18 +139,29 @@ func flipnoteCssGet(c *fiber.Ctx) error {
 }
 
 func flipnoteAuthGet(c *fiber.Ctx) error {
-
 	region := c.Params("region")
 	if region != "v2-us" && region != "v2-eu" && region != "v2-jp" {
 		fmt.Println("[Flipnote] Invalid region:", region)
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
-	rng := utils.NewUniqueRand(9999999999)
+	sess, err := c.Locals("sessions").(*session.Store).Get(c)
+	if err != nil {
+		fmt.Println("[Fiber] Unable to retrieve session:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
 
+	authChallenge := fmt.Sprintf("%d", utils.NewUniqueRand(9999999999).Int()) //~10 ASCII characters
+	sess.Set("auth", authChallenge)
+
+	if err := sess.Save(); err != nil {
+		fmt.Println("[Fiber] Error saving session for SID", sess.ID())
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	fmt.Println("[Flipnote] Starting session with auth challenge:", authChallenge)
 	c.Context().SetContentType("text/plain")
-	c.Response().Header.Set("X-DSi-Auth-Challenge", fmt.Sprintf("%d", rng.Int())) //8-10 ASCII characters
-	c.Response().Header.Set("X-DSi-SID", "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf")
+	c.Response().Header.Set("X-DSi-Auth-Challenge", authChallenge)
 	c.Response().Header.SetStatusCode(http.StatusOK) //Necessary when we aren't writing a body
 
 	return nil
@@ -162,13 +174,46 @@ func flipnoteAuthPost(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
-	id := c.Get("X-DSi-ID")
-	if id == "" {
-		fmt.Printf("[HTTP] [Flipnote:Auth] Invalid auth attempt\n")
+	sess, err := c.Locals("sessions").(*session.Store).Get(c)
+	if err != nil {
+		fmt.Println("[Fiber] Unable to retrieve session:", err)
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	fmt.Println("[Flipnote] Attempting to auth", sess.ID())
+	fmt.Println("Current keys:", sess.Keys())
+
+	fsid := c.Get("X-DSi-ID")
+	if fsid == "" {
+		fmt.Println("[Flipnote] Invalid auth attempt, missing FSID")
+	}
+
+	authResp := c.Get("X-DSi-Auth-Response")
+	if authResp == "" {
+		fmt.Println("[Flipnote] Invalid auth attempt, missing auth challenge response")
 		return c.SendStatus(http.StatusForbidden)
 	}
 
-	c.Response().Header.Set("X-DSi-SID", "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf")
+	authChallenge := sess.Get("auth")
+	if authChallenge == nil {
+		fmt.Println("[Fiber] Error performing auth challenge: no auth attempt in session")
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	authCheck, err := tools.AuthChallenge(fsid, authChallenge.(string))
+	if err != nil {
+		fmt.Println("[Flipnote] Error performing auth challenge:", err)
+		return c.SendStatus(http.StatusForbidden)
+	}
+
+	if authCheck != authResp {
+		fmt.Printf("[Flipnote] Invalid auth attempt, check (%s) does not match response (%s)\n", authCheck, authResp)
+		return c.SendStatus(http.StatusForbidden)
+	}
+
+	sess.Set("authResp", authResp)
+
+	c.Response().Header.Set("X-DSi-SID", sess.ID())
 	c.Response().Header.Set("X-DSi-New-Notices", "1")
 	c.Response().Header.Set("X-DSi-Unread-Notices", "1")
 	c.Response().SetStatusCode(http.StatusOK)
