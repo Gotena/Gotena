@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/JoshuaDoes/gotena/tools"
-	"github.com/JoshuaDoes/gotena/utils"
+	"github.com/Gotena/Gotena/tools"
+	"github.com/Gotena/Gotena/utils"
 	"github.com/RinLovesYou/ppmlib-go"
 	"github.com/gofiber/fiber/v2"
 

@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/JoshuaDoes/gotena/services/web/routes"
+	"github.com/Gotena/Gotena/services/web/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 )

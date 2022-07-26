@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/JoshuaDoes/gotena/services/dns"
-	"github.com/JoshuaDoes/gotena/services/web"
+	"github.com/Gotena/Gotena/services/dns"
+	"github.com/Gotena/Gotena/services/web"
 	"github.com/gofiber/fiber/v2"
 )
 

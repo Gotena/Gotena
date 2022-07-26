@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/JoshuaDoes/gotena/utils"
+	"github.com/Gotena/Gotena/utils"
 	crunch "github.com/superwhiskers/crunch/v3"
 )
 
